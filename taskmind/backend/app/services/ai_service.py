@@ -40,7 +40,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         )
         response = model.generate_content(PARSE_PROMPT.format(texto=texto))
         raw_text = response.text.strip()
-        log.info(f"Gemini raw response: {raw_text[:300]}")
+        log.error(f"Gemini raw response: {raw_text[:500]}")
 
         # Remove markdown code fences se presentes
         raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text)
@@ -63,7 +63,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         return task, data
 
     except Exception as e:
-        log.error(f"Gemini parse error: {e}")
+        log.exception(f"Gemini parse error: {e}")
         return _fallback(texto), None
 
 
