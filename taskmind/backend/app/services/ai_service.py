@@ -40,6 +40,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         )
         response = model.generate_content(PARSE_PROMPT.format(texto=texto))
         raw_text = response.text.strip()
+        log.info(f"Gemini raw response: {raw_text[:300]}")
 
         # Remove markdown code fences se presentes
         raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text)

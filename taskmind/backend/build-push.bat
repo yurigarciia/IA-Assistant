@@ -4,8 +4,8 @@ echo.
 
 set IMAGE=ygarciia/taskmind-api
 
-echo Buildando imagem...
-docker build -t %IMAGE%:latest .
+echo Buildando imagem (sem cache)...
+docker build --no-cache -t %IMAGE%:latest .
 if errorlevel 1 (
     echo ERRO: Falha no build.
     pause
