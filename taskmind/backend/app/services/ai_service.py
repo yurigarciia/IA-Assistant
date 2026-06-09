@@ -25,18 +25,29 @@ Texto: {texto}"""
 
 
 async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
+    import logging
+    log = logging.getLogger(__name__)
+
     if not settings.gemini_api_key:
         return _fallback(texto), None
 
     try:
         import google.generativeai as genai
         genai.configure(api_key=settings.gemini_api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel(
+            "gemini-1.5-flash",
+            generation_config={"response_mime_type": "application/json"},
+        )
         response = model.generate_content(PARSE_PROMPT.format(texto=texto))
         raw_text = response.text.strip()
 
+        # Remove markdown code fences se presentes
+        raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text)
+        raw_text = re.sub(r"\s*```$", "", raw_text.strip())
+
         json_match = re.search(r"\{.*\}", raw_text, re.DOTALL)
         if not json_match:
+            log.error(f"Gemini: JSON não encontrado na resposta: {raw_text[:200]}")
             return _fallback(texto), None
 
         data = json.loads(json_match.group())
@@ -51,8 +62,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         return task, data
 
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).error(f"Gemini parse error: {e}")
+        log.error(f"Gemini parse error: {e}")
         return _fallback(texto), None
 
 
