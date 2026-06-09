@@ -58,6 +58,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
 
 def _fallback(texto: str) -> TaskCreate:
     """Inferência básica por palavras-chave quando Gemini não está disponível."""
+    from datetime import datetime, timedelta, timezone
     t = texto.lower()
 
     if any(w in t for w in ["urgente", "urgentíssimo", "crítico", "agora", "imediato"]):
@@ -71,5 +72,15 @@ def _fallback(texto: str) -> TaskCreate:
     else:
         urgencia = "media"
 
+    now = datetime.now(timezone.utc)
+    prazo_inf = None
+    if "hoje" in t or "essa noite" in t or "esta noite" in t:
+        prazo_inf = now.replace(hour=23, minute=59, second=0, microsecond=0)
+    elif "amanhã" in t or "amanha" in t:
+        prazo_inf = (now + timedelta(days=1)).replace(hour=23, minute=59, second=0, microsecond=0)
+    elif "essa semana" in t or "esta semana" in t:
+        days_until_friday = (4 - now.weekday()) % 7
+        prazo_inf = (now + timedelta(days=days_until_friday)).replace(hour=23, minute=59, second=0, microsecond=0)
+
     titulo = texto.strip().lstrip("- ").strip()
-    return TaskCreate(titulo=titulo[:200], urgencia=urgencia)
+    return TaskCreate(titulo=titulo[:200], urgencia=urgencia, prazo_inf=prazo_inf)
