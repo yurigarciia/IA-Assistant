@@ -10,7 +10,7 @@
 
 ```
 FASE 1 — Fundação         [x] Código implementado — aguardando deploy no servidor
-FASE 2 — IA e Input       [ ] Pendente
+FASE 2 — IA e Input       [x] Código implementado — aguardando teste no Windows
 FASE 3 — Proatividade     [ ] Pendente
 FASE 4 — Canais e Bots    [ ] Pendente
 FASE 5 — Refinamento      [ ] Pendente
@@ -167,27 +167,29 @@ funcionando     funcionando     ativa           integrados      final
 
 ### 2.2 — Windows Tray App
 
-- [ ] Inicializar projeto Python (`tray-app/`)
+- [x] Inicializar projeto Python (`tray-app/`)
   ```
   tray-app/
-  ├── main.py         — entry point + tray icon
-  ├── modal.py        — janela de input
-  ├── api_client.py   — envio para FastAPI
-  └── config.py       — URL da API (configurável)
+  ├── main.py         — entry point + tray icon + hotkey
+  ├── modal.py        — janela tkinter sem borda
+  ├── api_client.py   — ingest_task + health_check
+  ├── config.py       — API_URL e HOTKEY via .env
+  ├── install.bat     — instalação de dependências
+  └── .env.example
   ```
-- [ ] Implementar ícone na bandeja com `pystray`
-  - Ícone visível na system tray
-  - Menu de contexto: "Nova tarefa", "Ver tarefas", "Sair"
-- [ ] Implementar modal de captura
-  - Janela minimalista (sem borda, sempre no topo)
-  - Campo de texto único
-  - Atalho de teclado global para abrir (ex: `Ctrl+Shift+T`)
-  - Envio com `Enter` ou botão Salvar
-  - Fecha automaticamente após envio
-- [ ] Envio para `POST /api/tasks/ingest` via `requests`
-- [ ] Notificação toast de confirmação ("Tarefa salva!")
-- [ ] Script de startup automático no Windows (registro no `shell:startup`)
-- [ ] Build em `.exe` com PyInstaller (opcional, facilita instalação)
+- [x] Ícone na bandeja gerado via Pillow (sem arquivo externo)
+  - Muda de cor (roxo = online, cinza = offline)
+  - Ping a cada 30s para verificar servidor
+  - Menu: "Nova tarefa", "Abrir dashboard", "Iniciar com Windows", "Sair"
+- [x] Modal de captura tkinter
+  - Janela sem borda, sempre no topo, centralizada
+  - Enter ou Ctrl+Enter para salvar
+  - Esc para fechar
+  - Feedback visual: "Enviando..." → "✓ Salvo: título" ou "✗ Sem conexão"
+  - Fecha automaticamente após sucesso
+- [x] Atalho global `Ctrl+Shift+T` (configurável no `.env`)
+- [x] Startup do Windows via registro (`HKCU\...\Run`) — toggle no menu do ícone
+- [ ] Build em `.exe` com PyInstaller (opcional — para instalar sem Python)
 
 **Marco 2 atingido quando:** atalho de teclado abre o modal, texto é enviado, IA processa e tarefa aparece estruturada na web. ✓
 
