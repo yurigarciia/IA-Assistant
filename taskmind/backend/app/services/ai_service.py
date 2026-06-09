@@ -38,7 +38,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
             "gemini-2.5-flash",
             generation_config={"response_mime_type": "application/json"},
         )
-        response = model.generate_content(PARSE_PROMPT.format(texto=texto))
+        response = model.generate_content(PARSE_PROMPT.replace("{texto}", texto))
         raw_text = response.text.strip()
         log.error(f"Gemini raw response: {raw_text[:500]}")
 
