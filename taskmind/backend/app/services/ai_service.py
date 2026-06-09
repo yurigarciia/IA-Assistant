@@ -50,9 +50,26 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         )
         return task, data
 
-    except Exception:
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Gemini parse error: {e}")
         return _fallback(texto), None
 
 
 def _fallback(texto: str) -> TaskCreate:
-    return TaskCreate(titulo=texto[:200], urgencia="media")
+    """Inferência básica por palavras-chave quando Gemini não está disponível."""
+    t = texto.lower()
+
+    if any(w in t for w in ["urgente", "urgentíssimo", "crítico", "agora", "imediato"]):
+        urgencia = "critica"
+    elif any(w in t for w in ["hoje", "amanhã", "amanha", "essa noite", "esta noite", "antes da reunião", "antes da reuniao"]):
+        urgencia = "critica"
+    elif any(w in t for w in ["essa semana", "esta semana", "cliente", "reunião", "reuniao", "entrega", "prazo"]):
+        urgencia = "alta"
+    elif any(w in t for w in ["algum dia", "quando der", "futuramente", "sem pressa"]):
+        urgencia = "baixa"
+    else:
+        urgencia = "media"
+
+    titulo = texto.strip().lstrip("- ").strip()
+    return TaskCreate(titulo=titulo[:200], urgencia=urgencia)
