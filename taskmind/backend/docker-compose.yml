@@ -1,6 +1,6 @@
 services:
   api:
-    image: yurigarciia/taskmind-api:latest
+    image: ygarciia/taskmind-api:latest
     restart: unless-stopped
     ports:
       - "8000:8000"

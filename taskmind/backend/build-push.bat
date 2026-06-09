@@ -2,7 +2,7 @@
 echo === TaskMind API - Build e Push para Docker Hub ===
 echo.
 
-set IMAGE=yurigarciia/taskmind-api
+set IMAGE=ygarciia/taskmind-api
 
 echo Buildando imagem...
 docker build -t %IMAGE%:latest .
