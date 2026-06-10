@@ -1,5 +1,5 @@
 export type Urgencia = "baixa" | "media" | "alta" | "critica";
-export type Status = "aberta" | "em_andamento" | "concluida" | "arquivada";
+export type Status = "aberta" | "em_progresso" | "aguardando" | "revisando" | "concluida";
 
 export interface Interaction {
   id: string;

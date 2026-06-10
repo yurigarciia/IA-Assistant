@@ -1,4 +1,4 @@
-import type { Task } from "@/types/task";
+import type { Task, Status } from "@/types/task";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -27,9 +27,13 @@ export async function ingestTask(texto: string): Promise<Task> {
   return data.task;
 }
 
-export async function completeTask(id: string): Promise<Task> {
-  const res = await fetch(`${BASE}/api/tasks/${id}/complete`, { method: "POST" });
-  if (!res.ok) throw new Error("Erro ao concluir tarefa");
+export async function updateTaskStatus(id: string, status: Status): Promise<Task> {
+  const res = await fetch(`${BASE}/api/tasks/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) throw new Error("Erro ao atualizar status");
   return res.json();
 }
 

@@ -4,7 +4,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 Urgencia = Literal["baixa", "media", "alta", "critica"]
-Status = Literal["aberta", "em_andamento", "concluida", "arquivada"]
+Status = Literal["aberta", "em_progresso", "aguardando", "revisando", "concluida"]
 
 
 class InteractionOut(BaseModel):
