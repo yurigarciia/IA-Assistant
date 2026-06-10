@@ -21,6 +21,7 @@ class Task(Base):
     criada_em: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
     atualizada_em: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
     concluida_em: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
+    ultimo_lembrete_em: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
 
     interactions: Mapped[list["Interaction"]] = relationship(back_populates="task", cascade="all, delete-orphan")
     ai_contexts: Mapped[list["AiContext"]] = relationship(back_populates="task", cascade="all, delete-orphan")

@@ -9,11 +9,11 @@
 ## Status Geral
 
 ```
-FASE 1 — Fundação         [x] Código implementado — aguardando deploy no servidor
-FASE 2 — IA e Input       [x] Código implementado — aguardando teste no Windows
-FASE 3 — Proatividade     [ ] Pendente
+FASE 1 — Fundação         [x] Completa e em produção
+FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.0-flash)
+FASE 3 — Proatividade     [ ] Próxima
 FASE 4 — Canais e Bots    [ ] Pendente
-FASE 5 — Refinamento      [ ] Pendente
+FASE 5 — Refinamento      [~] Parcial (drag & drop, busca, filtros, kanban já feitos)
 ```
 
 ---
@@ -305,9 +305,9 @@ funcionando     funcionando     ativa           integrados      final
 
 ### 5.1 — Funcionalidades de UX
 
-- [ ] Drag-and-drop para reordenar tarefas
-- [ ] Filtros avançados: por projeto, tag, urgência, data
-- [ ] Busca por texto nas tarefas
+- [x] Drag-and-drop para mover tarefas entre colunas do kanban
+- [x] Filtros por urgência e busca por texto/projeto/tag
+- [x] Kanban com 5 status (aberta, em_progresso, aguardando, revisando, concluída)
 - [ ] Agrupamento por projeto (view alternativa)
 - [ ] Modo escuro / claro
 - [ ] Animações de conclusão de tarefa
