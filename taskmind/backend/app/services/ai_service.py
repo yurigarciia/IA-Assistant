@@ -35,12 +35,11 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         import google.generativeai as genai
         genai.configure(api_key=settings.gemini_api_key)
         model = genai.GenerativeModel(
-            "gemini-2.5-flash",
+            "gemini-2.0-flash",
             generation_config={"response_mime_type": "application/json"},
         )
         response = model.generate_content(PARSE_PROMPT.replace("{texto}", texto))
         raw_text = response.text.strip()
-        log.error(f"Gemini raw response: {raw_text[:500]}")
 
         # Remove markdown code fences se presentes
         raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text)
