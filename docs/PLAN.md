@@ -13,7 +13,7 @@ FASE 1 — Fundação         [x] Completa e em produção
 TRAY APP                  [x] .exe distribuível com modal redesenhado (2026-06-15)
 FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
 FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
-FASE 4 — Canais e Bots    [x] Telegram completo — Teams postergado, PWA em andamento
+FASE 4 — Canais e Bots    [x] Completa — Telegram + PWA concluídos (Teams postergado)
 FASE 5 — Refinamento      [~] Parcial — melhorias futuras identificadas, foco em README e entrega
 ```
 
@@ -269,10 +269,13 @@ funcionando     funcionando     ativa           integrados      final
 
 ### 4.3 — PWA (Mobile)
 
-- [ ] Configurar `next-pwa` no Next.js
-- [ ] Criar `manifest.json` (nome, ícone, cores)
-- [ ] Testar instalação como app no Android/iOS via browser
-- [ ] Verificar responsividade do dashboard no celular
+- [x] Configurar `next-pwa` (@ducanh2912/next-pwa) no Next.js
+- [x] Criar `manifest.json` (nome, ícone roxo, tema #7c6af7)
+- [x] Ícones 192x512 gerados via Pillow + favicon SVG
+- [x] Instalação como app testada no Android via Chrome
+- [x] Layout mobile dedicado (< 768px): tab bar de status + lista por seções
+- [x] MobileTaskCard com botão Mover (bottom sheet) e Comentar inline
+- [x] Header compacto no mobile
 
 **Marco 4 atingido quando:** lembrete chega no Telegram, usuário responde e status atualiza no dashboard. ✓ **CONCLUÍDO em 2026-06-15** (Teams postergado)
 
