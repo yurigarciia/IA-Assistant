@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 async def _generate(prompt: str) -> str:
-    async with httpx.AsyncClient(timeout=90) as client:
+    async with httpx.AsyncClient(timeout=180) as client:
         r = await client.post(
             f"{settings.ollama_base_url}/api/generate",
             json={"model": settings.ollama_model, "prompt": prompt, "stream": False},
@@ -45,14 +45,18 @@ Retorne SOMENTE um array JSON válido, sem markdown, sem explicações:
 Se nenhuma tarefa merece lembrete agora, retorne exatamente: []"""
 
     try:
+        log.info(f"Ollama: enviando prompt com {len(tasks_context)} tarefas...")
         raw = await _generate(prompt)
+        log.info(f"Ollama raw response: {raw[:300]}")
         match = re.search(r"\[.*\]", raw, re.DOTALL)
         if not match:
-            log.warning(f"Ollama: JSON array não encontrado na resposta: {raw[:200]}")
+            log.warning(f"Ollama: JSON array não encontrado na resposta")
             return []
-        return json.loads(match.group())
+        result = json.loads(match.group())
+        log.info(f"Ollama selecionou {len(result)} tarefa(s) para lembrete")
+        return result
     except Exception as e:
-        log.error(f"Ollama decide_reminders error: {e}")
+        log.error(f"Ollama decide_reminders error: {repr(e)}")
         return []
 
 

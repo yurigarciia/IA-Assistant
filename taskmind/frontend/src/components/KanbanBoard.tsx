@@ -40,20 +40,24 @@ interface Props {
 
 export default function KanbanBoard({ tasks, search, onUpdate }: Props) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  // Optimistic moves: taskId -> newStatus aplicado localmente antes da API confirmar
+  const [pendingMoves, setPendingMoves] = useState<Record<string, Status>>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
   );
 
   const grouped = useMemo(() => {
-    const filtered = tasks.filter((t) => matchSearch(t, search));
+    const filtered = tasks
+      .map((t) => pendingMoves[t.id] ? { ...t, status: pendingMoves[t.id] } : t)
+      .filter((t) => matchSearch(t, search));
     return Object.fromEntries(
       COLUMNS.map((col) => [
         col.status,
         sortTasks(filtered.filter((t) => t.status === col.status)),
       ])
     ) as Record<Status, Task[]>;
-  }, [tasks, search]);
+  }, [tasks, search, pendingMoves]);
 
   const handleDragStart = useCallback(
     (event: { active: { id: string | number } }) => {
@@ -71,11 +75,24 @@ export default function KanbanBoard({ tasks, search, onUpdate }: Props) {
       const newStatus = over.id as Status;
       const task = tasks.find((t) => t.id === active.id);
       if (!task || task.status === newStatus) return;
-      await updateTaskStatus(task.id, newStatus);
-      onUpdate();
+
+      // Move instantâneo na UI
+      setPendingMoves((prev) => ({ ...prev, [task.id]: newStatus }));
+      try {
+        await updateTaskStatus(task.id, newStatus);
+        onUpdate();
+      } finally {
+        setPendingMoves((prev) => {
+          const next = { ...prev };
+          delete next[task.id];
+          return next;
+        });
+      }
     },
     [tasks, onUpdate]
   );
+
+  const isDragging = activeTask !== null;
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -85,6 +102,7 @@ export default function KanbanBoard({ tasks, search, onUpdate }: Props) {
             key={col.status}
             column={col}
             tasks={grouped[col.status] ?? []}
+            isDragging={isDragging}
             onUpdate={onUpdate}
           />
         ))}

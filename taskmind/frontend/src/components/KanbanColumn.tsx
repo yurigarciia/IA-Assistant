@@ -8,10 +8,11 @@ import KanbanCard from "@/components/KanbanCard";
 interface Props {
   column: ColumnDef;
   tasks: Task[];
+  isDragging: boolean;
   onUpdate: () => void;
 }
 
-export default function KanbanColumn({ column, tasks, onUpdate }: Props) {
+export default function KanbanColumn({ column, tasks, isDragging, onUpdate }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
 
   return (
@@ -35,9 +36,11 @@ export default function KanbanColumn({ column, tasks, onUpdate }: Props) {
         }`}
       >
         {tasks.length === 0 ? (
-          <div className="flex items-center justify-center py-10">
-            <span className="text-xs text-zinc-700 select-none">Solte aqui</span>
-          </div>
+          isDragging ? (
+            <div className="flex items-center justify-center py-10">
+              <span className="text-xs text-zinc-600 select-none">Solte aqui</span>
+            </div>
+          ) : null
         ) : (
           tasks.map((task) => (
             <KanbanCard key={task.id} task={task} onUpdate={onUpdate} />

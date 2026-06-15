@@ -3,6 +3,7 @@ import logging
 from contextlib import asynccontextmanager
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,6 +49,7 @@ async def lifespan(app: FastAPI):
     await _startup_checks()
     scheduler_service.start_scheduler()
     _polling_task = asyncio.create_task(telegram_service.start_polling())
+    asyncio.create_task(scheduler_service.proactivity_check())
     yield
     scheduler_service.stop_scheduler()
     if _polling_task and not _polling_task.done():
