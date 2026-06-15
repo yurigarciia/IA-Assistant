@@ -1,25 +1,34 @@
 import json
 import re
+from datetime import datetime, timezone
 from app.schemas.task import TaskCreate
 from app.config import settings
 
-PARSE_PROMPT = """Você é um assistente de produtividade. Analise o texto abaixo e extraia as informações da tarefa.
+PARSE_PROMPT = """Você é um assistente de produtividade. Hoje é {hoje}. Analise o texto abaixo e extraia as informações da tarefa.
 
 Retorne SOMENTE um JSON válido com esta estrutura (sem markdown, sem explicações):
-{
+{{
   "titulo": "título limpo e objetivo da tarefa",
   "descricao": "detalhes adicionais se houver, ou null",
   "urgencia": "baixa | media | alta | critica",
   "projeto": "nome do projeto ou cliente inferido, ou null",
   "tags": ["tag1", "tag2"],
   "prazo_inf": "ISO 8601 se mencionado, ou null"
-}
+}}
 
 Regras para urgência:
 - critica: palavras como "urgente", "agora", "hoje", "antes da reunião", "prazo hoje"
 - alta: contexto comercial com cliente, entrega próxima, "essa semana"
 - media: tarefas de rotina sem prazo claro
 - baixa: "algum dia", "quando der", "futuro"
+
+Regras para prazo_inf (use a data de hoje como referência):
+- "amanhã" → dia seguinte
+- "sexta", "segunda", etc. → próximo dia da semana a partir de hoje
+- "semana que vem" → segunda-feira da próxima semana
+- "mês que vem" → primeiro dia do próximo mês
+- Se apenas dia/mês mencionado (ex: "dia 20") → próximo dia 20 a partir de hoje
+- Sempre retornar no formato ISO 8601 com horário 23:59:00 se não especificado
 
 Texto: {texto}"""
 
@@ -38,7 +47,9 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
             "gemini-2.5-flash",
             generation_config={"response_mime_type": "application/json"},
         )
-        response = model.generate_content(PARSE_PROMPT.replace("{texto}", texto))
+        hoje = datetime.now(timezone.utc).strftime("%A, %d de %B de %Y")
+        prompt = PARSE_PROMPT.format(hoje=hoje, texto=texto)
+        response = model.generate_content(prompt)
         raw_text = response.text.strip()
 
         # Remove markdown code fences se presentes

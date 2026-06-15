@@ -4,8 +4,10 @@ import { useState, useCallback } from "react";
 import useSWR from "swr";
 import type { Task } from "@/types/task";
 import { fetchTasks } from "@/lib/api";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import Header from "@/components/Header";
 import KanbanBoard from "@/components/KanbanBoard";
+import MobileLayout from "@/components/mobile/MobileLayout";
 import NewTaskModal from "@/components/NewTaskModal";
 
 export default function Home() {
@@ -17,6 +19,7 @@ export default function Home() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const isMobile = useIsMobile();
 
   const handleUpdate = useCallback(() => mutate(), [mutate]);
 
@@ -27,12 +30,15 @@ export default function Home() {
         search={search}
         onSearchChange={setSearch}
         onNewTask={() => setModalOpen(true)}
+        isMobile={isMobile}
       />
 
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <span className="text-zinc-600 text-sm">Carregando...</span>
         </div>
+      ) : isMobile ? (
+        <MobileLayout tasks={tasks} search={search} onUpdate={handleUpdate} />
       ) : (
         <KanbanBoard tasks={tasks} search={search} onUpdate={handleUpdate} />
       )}
