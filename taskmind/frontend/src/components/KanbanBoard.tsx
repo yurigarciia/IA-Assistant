@@ -79,7 +79,7 @@ export default function KanbanBoard({ tasks, search, onUpdate }: Props) {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex gap-3 px-5 py-5 items-start overflow-x-auto flex-1 h-full">
+      <div className="flex gap-3 px-4 py-4 items-start overflow-x-auto flex-1 h-full md:grid md:grid-cols-5 md:overflow-x-visible">
         {COLUMNS.map((col) => (
           <KanbanColumn
             key={col.status}

@@ -15,7 +15,7 @@ export default function KanbanColumn({ column, tasks, onUpdate }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
 
   return (
-    <div className="flex-shrink-0 w-72 flex flex-col rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
+    <div className="flex-shrink-0 w-64 md:w-auto md:min-w-0 md:flex-1 flex flex-col rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
       {/* Column header */}
       <div className={`flex items-center gap-2 px-3 py-2.5 border-b border-zinc-800 ${column.headerBg}`}>
         <span className={`w-2 h-2 rounded-full flex-shrink-0 ${column.dot}`} />
