@@ -12,8 +12,8 @@
 FASE 1 — Fundação         [x] Completa e em produção
 FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
 FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
-FASE 4 — Canais e Bots    [~] Telegram completo (Teams + PWA = melhoria futura)
-FASE 5 — Refinamento      [~] Parcial (drag & drop, busca, filtros, kanban já feitos)
+FASE 4 — Canais e Bots    [x] Telegram completo — Teams postergado, PWA em andamento
+FASE 5 — Refinamento      [~] Parcial — melhorias futuras identificadas, foco em README e entrega
 ```
 
 ---
@@ -48,18 +48,16 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Configurar variáveis de ambiente (`.env.example` criado com todas as variáveis)
   - `DATABASE_URL` apontando para o banco já existente no servidor
   - Demais segredos (Gemini API key, Telegram token, etc.)
-- [ ] Copiar `.env.example` → `.env` no servidor e preencher credenciais reais
-- [ ] Rodar backend e frontend como processos diretos no servidor (ex: `uvicorn` + `pm2` ou scripts de serviço)
-- [ ] Configurar Nginx como proxy reverso (se já não estiver configurado)
-  - `/` → frontend (porta 3000)
-  - `/api` → backend (porta 8000)
-- [ ] Verificar acesso via IP da VPN
+- [x] Copiar `.env.example` → `.env` no servidor e preencher credenciais reais
+- [x] Rodar backend e frontend via Docker + Portainer (containers gerenciados)
+- [x] Nginx configurado como proxy reverso
+- [x] Acesso via IP da VPN funcionando
 
 ### 1.2 — Banco de Dados
 
 > O banco PostgreSQL já está rodando no servidor. Basta conectar e criar as tabelas do TaskMind.
 
-- [ ] Confirmar credenciais de acesso e string de conexão (`DATABASE_URL`)
+- [x] Confirmar credenciais de acesso e string de conexão (`DATABASE_URL`)
 - [x] Criar as tabelas do TaskMind via migration (Alembic — migration `0001_initial.py` pronta):
 
   ```sql
@@ -110,8 +108,8 @@ funcionando     funcionando     ativa           integrados      final
   ```
 
 - [x] Configurar Alembic para migrations (versionamento de schema)
-- [ ] Rodar migration inicial no servidor (`alembic upgrade head`)
-- [ ] Validar conexão do backend com o banco via `.env`
+- [x] Rodar migration inicial no servidor (automático via entrypoint.sh no container)
+- [x] Validar conexão do backend com o banco via `.env`
 
 ### 1.3 — Backend (FastAPI)
 
@@ -136,7 +134,7 @@ funcionando     funcionando     ativa           integrados      final
   - `POST /api/tasks/{id}/comment` — comentar
   - `GET  /api/health` — health check
 - [x] Configurar CORS
-- [ ] Validar Swagger em `/docs` após subir no servidor
+- [x] Validar Swagger em `/docs` após subir no servidor (disponível por padrão no FastAPI)
 
 ### 1.4 — Frontend (Next.js)
 
@@ -163,7 +161,7 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Prompt de sistema para extração de entidades (título, urgência, projeto, prazo, tags)
 - [x] Endpoint `POST /api/tasks/ingest` implementado
 - [x] Fallback: se Gemini falhar ou key não configurada, salva com urgência "media"
-- [ ] Testes de parsing com exemplos variados (validar em uso real)
+- [x] Testes de parsing com exemplos variados (validado em uso real)
 
 ### 2.2 — Windows Tray App
 
@@ -189,7 +187,7 @@ funcionando     funcionando     ativa           integrados      final
   - Fecha automaticamente após sucesso
 - [x] Atalho global `Ctrl+Shift+T` (configurável no `.env`)
 - [x] Startup do Windows via registro (`HKCU\...\Run`) — toggle no menu do ícone
-- [ ] Build em `.exe` com PyInstaller (opcional — para instalar sem Python)
+- [ ] Build em `.exe` com PyInstaller
 
 **Marco 2 atingido quando:** atalho de teclado abre o modal, texto é enviado, IA processa e tarefa aparece estruturada na web. ✓
 
@@ -263,33 +261,9 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Silêncio noturno: proactivity_check bloqueado entre 23h e 8h (horário Brasília)
 - [x] Pré-filtro de cooldown em Python antes do Ollama (evita spam a cada 15min)
 
-### 4.2 — Microsoft Teams
+### 4.2 — Microsoft Teams _(melhoria futura — fora do escopo atual)_
 
-- [ ] Registrar app no Azure AD (App ID + Secret)
-- [ ] Criar manifesto do Teams App (`manifest.json`):
-  - Tab apontando para o frontend Next.js
-  - Bot configurado com webhook endpoint
-- [ ] Implementar handler Teams no FastAPI:
-  - `POST /webhook/teams` — recebe mensagens e atividades
-  - Responder a mensagens de texto com parsing via IA
-  - Enviar Adaptive Cards para lembretes com botões
-- [ ] Criar `Adaptive Card` template para notificações:
-  ```json
-  {
-    "type": "AdaptiveCard",
-    "body": [
-      { "type": "TextBlock", "text": "🔔 Lembrete: {titulo}" },
-      { "type": "TextBlock", "text": "Há {dias} dias sem interação" }
-    ],
-    "actions": [
-      { "type": "Action.Submit", "title": "✅ Feito", "data": {"action": "complete"} },
-      { "type": "Action.Submit", "title": "⏭ Adiar", "data": {"action": "snooze"} }
-    ]
-  }
-  ```
-- [ ] Adicionar endpoint `/webhook/teams` ao endpoint list da API
-- [ ] Instalar app manualmente no Teams (sideload)
-- [ ] Testar tab + bot no Teams
+> Requer Azure AD, registro de app e infraestrutura pública. Postergado.
 
 ### 4.3 — PWA (Mobile)
 
@@ -298,7 +272,7 @@ funcionando     funcionando     ativa           integrados      final
 - [ ] Testar instalação como app no Android/iOS via browser
 - [ ] Verificar responsividade do dashboard no celular
 
-**Marco 4 atingido quando:** lembrete chega no Telegram E Teams, usuário responde por qualquer um dos dois, e o status atualiza no dashboard. ✓
+**Marco 4 atingido quando:** lembrete chega no Telegram, usuário responde e status atualiza no dashboard. ✓ **CONCLUÍDO em 2026-06-15** (Teams postergado)
 
 ---
 
@@ -311,28 +285,24 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Drag-and-drop para mover tarefas entre colunas do kanban
 - [x] Filtros por urgência e busca por texto/projeto/tag
 - [x] Kanban com 5 status (aberta, em_progresso, aguardando, revisando, concluída)
-- [ ] Agrupamento por projeto (view alternativa)
-- [ ] Modo escuro / claro
-- [ ] Animações de conclusão de tarefa
+- [ ] Agrupamento por projeto (view alternativa) _(melhoria futura)_
+- [ ] Modo escuro / claro _(melhoria futura)_
+- [ ] Animações de conclusão de tarefa _(melhoria futura)_
 
 ### 5.2 — Resumos com IA
 
-- [ ] Resumo diário automático (08h) via Telegram/Teams:
-  - "Bom dia! Você tem X tarefas abertas. As 3 mais urgentes são..."
-- [ ] Resumo semanal (segunda-feira):
-  - Tarefas concluídas na semana
-  - Tarefas arrastadas sem resolução
-  - Sugestão de foco da semana
-- [ ] Endpoint `GET /api/tasks/summary` com resumo em texto gerado pela IA
+- [x] Resumo diário automático (08h) via Telegram — implementado em `daily_summary()`
+- [ ] Resumo semanal (segunda-feira) _(melhoria futura)_
+- [ ] Endpoint `GET /api/tasks/summary` com resumo em texto gerado pela IA _(melhoria futura)_
 
 ### 5.3 — Estabilidade e Operação
 
-- [ ] Logs estruturados no backend (JSON, com request ID)
-- [ ] Health check endpoint com status dos serviços dependentes
-- [ ] Script de backup automático do PostgreSQL
-- [ ] Variáveis sensíveis em `.env` (nunca commitadas)
-- [ ] Documentação de como rodar o projeto (`README.md`)
-- [ ] Testes de integração para os endpoints principais
+- [ ] Logs estruturados no backend (JSON, com request ID) _(melhoria futura)_
+- [x] Health check no startup: valida Ollama, Gemini e Telegram nos logs
+- [ ] Script de backup automático do PostgreSQL _(melhoria futura)_
+- [x] Variáveis sensíveis em `.env` (nunca commitadas — `.gitignore` configurado)
+- [ ] README.md com instruções de instalação e uso
+- [ ] Testes de integração para os endpoints principais _(melhoria futura)_
 
 **Marco 5 atingido quando:** sistema em uso real diário por pelo menos 1 semana sem falhas críticas. ✓
 
@@ -367,18 +337,18 @@ FASE 2              FASE 3
 | Decisão | Opções | Status |
 |---|---|---|
 | Modelo Ollama padrão | llama3.2 / mistral / qwen2.5 | **qwen2.5:3b** (definido — 3b suficiente para seleção de lembretes) |
-| Modal do Tray App | tkinter / webview / HTML local | A definir na Fase 2 |
-| Autenticação | Sem auth (uso pessoal) / JWT simples | A definir |
-| Atalho global Tray | Ctrl+Shift+T / outro | A definir na Fase 2 |
+| Modal do Tray App | tkinter / webview / HTML local | **tkinter** (definido e implementado) |
+| Autenticação | Sem auth (uso pessoal) / JWT simples | **Sem auth** (uso pessoal) |
+| Atalho global Tray | Ctrl+Shift+T / outro | **Ctrl+Shift+T** (configurável via .env) |
 
 ---
 
 ## Checklist de Entrega (Laboratório de Inovação)
 
 - [ ] Documentação (`PROJECT.md`) completa
-- [ ] Plano de desenvolvimento (`PLAN.md`) completo
+- [x] Plano de desenvolvimento (`PLAN.md`) completo e atualizado
 - [ ] Sistema rodando (demo ao vivo ou vídeo)
-- [ ] Pelo menos 2 canais de input funcionando
-- [ ] IA processando linguagem natural
-- [ ] Proatividade demonstrável (lembrete automático)
-- [ ] Código no repositório git organizado
+- [x] Pelo menos 2 canais de input funcionando (Tray App + Telegram `/nova`)
+- [x] IA processando linguagem natural (Gemini ingest + Gemini reply parsing)
+- [x] Proatividade demonstrável (lembrete automático via Ollama + Telegram)
+- [x] Código no repositório git organizado
