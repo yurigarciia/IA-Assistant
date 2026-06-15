@@ -1,6 +1,6 @@
 # TaskMind — Gestor de Tarefas Pessoal com IA Proativa
 
-> Documentação de concepção, arquitetura e proposta de solução  
+> Documentação de concepção, arquitetura e implementação  
 > Disciplina: Laboratório de Inovação  
 > Autor: Yuri Garcia  
 > Data: Junho de 2026
@@ -425,10 +425,10 @@ PostgreSQL 15+
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Gemini API (Google)          Ollama (local)        │
-│  - gemini-1.5-flash           - llama3 / mistral    │
+│  - gemini-2.5-flash           - qwen2.5:3b          │
 │  - Parsing de input           - Motor proativo      │
-│  - Inferência de urgência     - Análise noturna     │
-│  - Resumos                    - Sem custo adicional │
+│  - NLP bidirecional Telegram  - Decisão de lembretes│
+│  - Inferência de urgência     - Sem custo adicional │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -438,37 +438,36 @@ PostgreSQL 15+
 
 ### Servidor Doméstico
 
-Os serviços rodam diretamente no servidor (sem Docker Compose), aproveitando a infraestrutura já existente:
+Os serviços rodam em Docker gerenciados via Portainer, com Tailscale VPN para acesso remoto:
 
-| Serviço | Como roda | Observação |
+| Serviço | Como roda | Porta |
 |---|---|---|
-| PostgreSQL | Já em execução | Banco existente — apenas criar as tabelas do TaskMind |
-| FastAPI (backend) | `uvicorn` via `pm2` ou serviço systemd | Porta 8000 |
-| Next.js (frontend) | `pm2` ou serviço systemd | Porta 3000 |
-| Ollama | Binário nativo ou serviço | Porta 11434 (interno) |
-| Nginx | Já configurado ou a configurar | Proxy reverso + HTTPS |
+| FastAPI (backend) | Docker container | 8000 |
+| Next.js / PWA (frontend) | Docker container | 3010 |
+| Neon DB | PostgreSQL serverless (cloud) | — |
+| Ollama | Processo nativo no host | 11434 (interno) |
+
+Imagens publicadas no Docker Hub: `ygarciia/taskmind-api` e `ygarciia/taskmind-frontend`.
 
 ### Rede
 
 ```
 Internet
     │
-    └── VPN (WireGuard/OpenVPN)
+    └── Tailscale VPN (IP fixo: 100.125.38.37)
             │
-            └── IP Fixo do Servidor
-                    │
-                    ├── :443  → Nginx → Next.js (frontend)
-                    ├── :8000 → Nginx → FastAPI (API)
-                    └── :11434 → Ollama (interno apenas)
+            ├── :8000  → FastAPI (backend)
+            ├── :3010  → Next.js / PWA (frontend)
+            └── :11434 → Ollama (interno, via bridge Docker 172.17.0.1)
 ```
 
 ### Acesso por Dispositivo
 
 | Dispositivo | Como acessa | Interface |
 |---|---|---|
-| Windows (qualquer PC) | VPN + browser | PWA / Tray App |
-| Smartphone | VPN + browser | PWA instalada |
-| Telegram | Bot (sem VPN necessária) | Bot interativo |
+| Windows (qualquer PC) | Tailscale + browser | PWA + Tray App (.exe) |
+| Smartphone | Tailscale + browser | PWA instalada (Android/iOS) |
+| Telegram | Bot polling (sem VPN) | Bot bidirecional |
 
 ---
 
@@ -509,12 +508,12 @@ Tarefa criada
 
 | Endpoint | Método | Descrição |
 |---|---|---|
-| `/tasks` | GET | Lista todas as tarefas |
-| `/tasks/ingest` | POST | Cria tarefa via linguagem natural |
-| `/tasks/{id}` | PATCH | Atualiza status/comentário |
-| `/tasks/{id}/complete` | POST | Marca como concluída |
-| `/tasks/summary` | GET | Resumo gerado pela IA |
-| `/webhook/telegram` | POST | Recebe respostas do Telegram |
+| `/tasks` | GET | Lista tarefas (query: status, urgencia, busca) |
+| `/tasks/ingest` | POST | Cria tarefa via texto em linguagem natural |
+| `/tasks/{id}` | GET | Detalhe de tarefa com histórico |
+| `/tasks/{id}` | PATCH | Atualiza campos (status, urgencia, titulo, etc.) |
+| `/tasks/{id}` | DELETE | Remove tarefa |
+| `/tasks/{id}/interactions` | POST | Adiciona comentário/interação |
 
 ### Módulo 4 — Interface Web (`/frontend`)
 
@@ -566,30 +565,37 @@ Tarefa criada
 ## 12. Roadmap de Desenvolvimento
 
 ```
-FASE 1 — Fundação (Semana 1-2)
-├── Setup do servidor (Docker Compose)
-├── Banco de dados PostgreSQL + schemas
-├── API FastAPI com endpoints básicos (CRUD de tarefas)
-└── Frontend Next.js básico (lista + criar tarefa)
+FASE 1 — Fundação ✅ CONCLUÍDA
+├── ✅ Docker + Neon DB (PostgreSQL serverless) + schemas (Alembic)
+├── ✅ API FastAPI com CRUD completo de tarefas
+├── ✅ Frontend Next.js com kanban 5 colunas (Aberta/Em Progresso/Aguardando/Revisando/Concluída)
+└── ✅ Drag & drop entre colunas com atualização otimista
 
-FASE 2 — IA e Input (Semana 3-4)
-├── Integração com Gemini API (parsing de linguagem natural)
-├── Inferência de urgência e metadados
-├── Windows Tray App (ícone + modal)
-└── Input por texto livre funcionando end-to-end
+FASE 2 — IA e Input ✅ CONCLUÍDA
+├── ✅ Integração com Gemini 2.5-flash (parsing NL, inferência de urgência, prazo, tags, projeto)
+├── ✅ Windows Tray App (.exe PyInstaller, hotkey Ctrl+Shift+T)
+├── ✅ Modal Spotlight-style com DWM rounded corners + barra de progresso animada
+└── ✅ .env embutido no .exe (sem dependência externa pós-build)
 
-FASE 3 — Proatividade (Semana 5-6)
-├── Setup do Ollama no servidor
-├── Motor de proatividade (APScheduler)
-├── Lógica de pressão crescente
-└── Integração com Telegram Bot (notificações + botões)
+FASE 3 — Proatividade e Telegram ✅ CONCLUÍDA
+├── ✅ Ollama qwen2.5:3b no servidor para decisão de lembretes
+├── ✅ APScheduler: proatividade a cada 15min (silêncio noturno 23h-8h BRT)
+├── ✅ Cooldowns por urgência em Python (critica=2h, alta=6h, media=24h, baixa=72h)
+├── ✅ Telegram /tasks (lista por urgência) + /nova (criar via NL)
+├── ✅ NLP bidirecional: resposta livre atualiza status/comentário via Gemini
+└── ✅ Resumo diário às 8h
 
-FASE 4 — Refinamento (Semana 7-8)
-├── PWA (instalável no celular)
-├── Filtros e agrupamentos na UI
-├── Histórico e comentários por tarefa
-├── Resumo semanal automatizado
-└── Testes e ajustes de experiência
+FASE 4 — PWA e Mobile ✅ CONCLUÍDA
+├── ✅ PWA com @ducanh2912/next-pwa (manifest, service worker, ícones, installable)
+├── ✅ Layout mobile separado (MobileLayout + MobileTaskCard + MobileStatusSheet)
+├── ✅ Hook useIsMobile com MediaQueryList (breakpoint 768px)
+├── ✅ Busca, filtros e redesign visual no dashboard desktop
+└── ✅ Comentários inline + histórico de interações por tarefa
+
+MELHORIAS FUTURAS (fora do escopo atual)
+├── Integração com Microsoft Teams
+├── Resumo semanal em PDF
+└── Múltiplos usuários / workspaces
 ```
 
 ---

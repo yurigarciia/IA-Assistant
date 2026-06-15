@@ -14,7 +14,7 @@ TRAY APP                  [x] .exe distribuível com modal redesenhado (2026-06-
 FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
 FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
 FASE 4 — Canais e Bots    [x] Completa — Telegram + PWA concluídos (Teams postergado)
-FASE 5 — Refinamento      [~] Parcial — melhorias futuras identificadas, foco em README e entrega
+FASE 5 — Refinamento      [x] Documentação entregue (README + PROJECT.md atualizados)
 ```
 
 ---
@@ -306,7 +306,7 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Health check no startup: valida Ollama, Gemini e Telegram nos logs
 - [ ] Script de backup automático do PostgreSQL _(melhoria futura)_
 - [x] Variáveis sensíveis em `.env` (nunca commitadas — `.gitignore` configurado)
-- [ ] README.md com instruções de instalação e uso
+- [x] README.md com instruções de instalação e uso
 - [ ] Testes de integração para os endpoints principais _(melhoria futura)_
 
 **Marco 5 atingido quando:** sistema em uso real diário por pelo menos 1 semana sem falhas críticas. ✓
