@@ -2,7 +2,7 @@
 
 > Planejamento detalhado de marcos, fases e etapas  
 > Baseado em: [PROJECT.md](./PROJECT.md)  
-> Última atualização: 2026-06-08 (rev: sem Docker Compose, banco externo já existente)
+> Última atualização: 2026-06-14
 
 ---
 
@@ -11,8 +11,8 @@
 ```
 FASE 1 — Fundação         [x] Completa e em produção
 FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.0-flash)
-FASE 3 — Proatividade     [ ] Próxima
-FASE 4 — Canais e Bots    [ ] Pendente
+FASE 3 — Proatividade     [x] Completa e em produção (2026-06-14)
+FASE 4 — Canais e Bots    [ ] Pendente (Telegram receber comandos, Teams, PWA)
 FASE 5 — Refinamento      [~] Parcial (drag & drop, busca, filtros, kanban já feitos)
 ```
 
@@ -202,24 +202,22 @@ funcionando     funcionando     ativa           integrados      final
 
 ### 3.1 — Setup do Ollama
 
-- [ ] Adicionar serviço `ollama` ao `docker-compose.yml`
-- [ ] Baixar modelo base (ex: `llama3.2` ou `mistral`)
-- [ ] Criar cliente Ollama no backend (`ollama_client.py`)
-- [ ] Teste de chamada: perguntar ao modelo sobre uma tarefa mock
-- [ ] Definir qual modelo usar para qual tarefa (routing Gemini vs Ollama)
+- [x] Ollama instalado no servidor como serviço systemd
+- [x] Modelo `qwen2.5:7b` (4.7GB) rodando em `0.0.0.0:11434`
+- [x] Criar cliente Ollama no backend (`ollama_service.py`) com `is_available()` e `decide_reminders()`
+- [x] Acessível pelo Docker via `172.17.0.1:11434` (bridge gateway)
 
 ### 3.2 — Motor de Proatividade
 
-- [ ] Configurar APScheduler integrado ao FastAPI
-- [ ] Implementar `scheduler_service.py` com jobs:
+- [x] Configurar APScheduler integrado ao FastAPI (lifespan)
+- [x] Implementar `scheduler_service.py` com jobs:
 
   | Job | Frequência | Descrição |
   |---|---|---|
-  | `check_stale_tasks` | A cada 6h | Verifica tarefas sem interação |
-  | `daily_summary` | Todo dia 08h | Resumo do dia enviado via bot |
-  | `weekly_report` | Segunda 09h | Resumo semanal com IA |
+  | `proactivity_check` | A cada 15min | Ollama decide quais tarefas lembrar |
+  | `daily_summary` | Todo dia 08h | Resumo do dia enviado via Telegram |
 
-- [ ] Implementar lógica de pressão crescente:
+- [x] Implementar lógica de pressão crescente:
   ```python
   def calcular_pressao(task) -> str | None:
       dias = (now() - task.ultima_interacao).days
@@ -230,16 +228,19 @@ funcionando     funcionando     ativa           integrados      final
       if dias >= 30: return "sugestao_arquivar"
       return None
   ```
-- [ ] Prompt para o Ollama decidir quais tarefas lembrar:
+- [x] Prompt para o Ollama decidir quais tarefas lembrar:
   ```
   Você é um assistente de produtividade. Analise estas tarefas abertas
   e indique quais merecem um lembrete AGORA. Seja criterioso — não
   sobrecarregue o usuário. Retorne JSON com: [{"id": ..., "motivo": ...}]
   ```
-- [ ] Registrar cada notificação enviada na tabela `notifications`
-- [ ] Evitar lembrete duplicado (cooldown mínimo por tarefa)
+- [x] Registrar cada notificação enviada na tabela `notifications`
+- [x] Evitar lembrete duplicado via campo `ultimo_lembrete_em` + cooldown por urgência
+- [x] `telegram_service.py`: envio + polling bidirecional + parse de respostas via Gemini
+- [x] Entrypoint do Docker roda migrations automaticamente antes de subir a API
+- [x] Health check no startup: valida Ollama, Gemini e Telegram nos logs
 
-**Marco 3 atingido quando:** scheduler roda, consulta Ollama, e gera notificações para tarefas esquecidas. ✓
+**Marco 3 atingido quando:** scheduler roda, consulta Ollama, e gera notificações para tarefas esquecidas. ✓ **CONCLUÍDO em 2026-06-14**
 
 ---
 

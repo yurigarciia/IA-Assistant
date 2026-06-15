@@ -5,7 +5,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from app.db import async_session
+from app.db import SessionLocal as async_session
 from app.models.task import Task, Notification
 
 log = logging.getLogger(__name__)

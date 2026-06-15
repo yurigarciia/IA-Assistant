@@ -100,7 +100,7 @@ Se a resposta não se refere claramente a nenhuma tarefa, retorne []."""
 
 
 async def _process_reply(user_text: str) -> None:
-    from app.db import async_session
+    from app.db import SessionLocal as async_session
     from app.models.task import Task, Interaction, Notification
     from sqlalchemy import select
 
