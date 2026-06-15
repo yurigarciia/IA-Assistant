@@ -53,6 +53,15 @@ async def proactivity_check() -> None:
             "prazo_inf": t.prazo_inf.isoformat() if t.prazo_inf else None,
         })
 
+    log.info(f"Proactivity check: contexto enviado ao Ollama:")
+    for ctx in tasks_context:
+        log.info(
+            f"  [{ctx['urgencia'].upper()}] {ctx['titulo']!r} | status={ctx['status']} "
+            f"| dias_sem_interacao={ctx['dias_sem_interacao']} "
+            f"| horas_desde_lembrete={ctx['horas_desde_ultimo_lembrete']} "
+            f"| prazo={ctx['prazo_inf']}"
+        )
+
     # Ollama decide quem notificar
     if not await ollama_service.is_available():
         log.warning("Proactivity check: Ollama indisponível, pulando")

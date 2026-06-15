@@ -2,7 +2,7 @@
 
 > Planejamento detalhado de marcos, fases e etapas  
 > Baseado em: [PROJECT.md](./PROJECT.md)  
-> Última atualização: 2026-06-14
+> Última atualização: 2026-06-15
 
 ---
 
@@ -10,9 +10,9 @@
 
 ```
 FASE 1 — Fundação         [x] Completa e em produção
-FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.0-flash)
-FASE 3 — Proatividade     [x] Completa e em produção (2026-06-14)
-FASE 4 — Canais e Bots    [ ] Pendente (Telegram receber comandos, Teams, PWA)
+FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
+FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
+FASE 4 — Canais e Bots    [~] Telegram bidirecional já implementado na Fase 3 (Teams + PWA pendentes)
 FASE 5 — Refinamento      [~] Parcial (drag & drop, busca, filtros, kanban já feitos)
 ```
 
@@ -240,7 +240,9 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Entrypoint do Docker roda migrations automaticamente antes de subir a API
 - [x] Health check no startup: valida Ollama, Gemini e Telegram nos logs
 
-**Marco 3 atingido quando:** scheduler roda, consulta Ollama, e gera notificações para tarefas esquecidas. ✓ **CONCLUÍDO em 2026-06-14**
+**Marco 3 atingido quando:** scheduler roda, consulta Ollama, e gera notificações para tarefas esquecidas. ✓ **CONCLUÍDO em 2026-06-15**
+
+> **Testado end-to-end em 2026-06-15:** Ollama (qwen2.5:3b) selecionou tarefa TCC → notificação enviada via Telegram → usuário respondeu em linguagem natural → Gemini (2.5-flash) identificou ação e atualizou status no banco → confirmação enviada de volta pelo bot.
 
 ---
 
@@ -251,15 +253,13 @@ funcionando     funcionando     ativa           integrados      final
 
 ### 4.1 — Telegram Bot
 
-- [ ] Criar bot no BotFather e obter token
-- [ ] Adicionar serviço `telegram-bot` ao `docker-compose.yml`
-- [ ] Implementar handlers:
-  - Mensagem de texto livre → `POST /api/tasks/ingest`
-  - Comando `/tasks` → lista tarefas abertas
-  - Callback de botões inline: Feito / Comentar / Adiar
-- [ ] Implementar envio de lembretes com botões interativos (Inline Keyboard)
-- [ ] Webhook: `POST /webhook/telegram` no FastAPI
-- [ ] Testar fluxo completo: lembrete → resposta → atualização no banco
+- [x] Bot criado e configurado (token + chat_id)
+- [x] Polling bidirecional via httpx (sem webhook — IP não público fora da VPN)
+- [x] Envio de lembretes proativos com formato Markdown
+- [x] Receber resposta em linguagem natural → Gemini identifica tarefa e ação → atualiza banco
+- [x] Testado end-to-end em 2026-06-15
+- [ ] Comando `/tasks` — listar tarefas abertas pelo bot
+- [ ] Comando `/nova` — criar tarefa via bot (texto livre → ingest)
 
 ### 4.2 — Microsoft Teams
 
@@ -364,7 +364,7 @@ FASE 2              FASE 3
 
 | Decisão | Opções | Status |
 |---|---|---|
-| Modelo Ollama padrão | llama3.2 / mistral / qwen2.5 | A definir na Fase 3 |
+| Modelo Ollama padrão | llama3.2 / mistral / qwen2.5 | **qwen2.5:3b** (definido — 3b suficiente para seleção de lembretes) |
 | Modal do Tray App | tkinter / webview / HTML local | A definir na Fase 2 |
 | Autenticação | Sem auth (uso pessoal) / JWT simples | A definir |
 | Atalho global Tray | Ctrl+Shift+T / outro | A definir na Fase 2 |

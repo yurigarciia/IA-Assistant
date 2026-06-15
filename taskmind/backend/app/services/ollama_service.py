@@ -25,24 +25,27 @@ async def decide_reminders(tasks_context: list[dict]) -> list[dict]:
     if not settings.ollama_base_url:
         return []
 
-    prompt = f"""Você é um assistente de produtividade pessoal. Analise as tarefas abaixo e decida quais merecem um lembrete AGORA para o usuário.
+    prompt = f"""Você é um assistente de produtividade. Selecione quais tarefas abaixo merecem lembrete agora.
 
-Regras de frequência mínima entre lembretes:
-- critica: enviar se passaram mais de 2h desde o último lembrete
-- alta: enviar se passaram mais de 6h desde o último lembrete
-- media: enviar se passaram mais de 24h desde o último lembrete
-- baixa: enviar se passaram mais de 72h desde o último lembrete
-- Se "horas_desde_ultimo_lembrete" for null, nunca foi lembrado — priorizar.
-- Seja SELETIVO. Máximo 5 tarefas por vez. Não sobrecarregue o usuário.
-- Tarefas com prazo próximo têm prioridade extra.
+Critérios de seleção (selecione se qualquer um for verdadeiro):
+- horas_desde_ultimo_lembrete é null (nunca foi lembrado)
+- horas_desde_ultimo_lembrete > 6 e urgencia é "critica" ou "alta"
+- horas_desde_ultimo_lembrete > 24 e urgencia é "media"
+- horas_desde_ultimo_lembrete > 72 e urgencia é "baixa"
+- dias_sem_interacao > 3
+
+Máximo 5 tarefas. Prefira urgência maior.
 
 Tarefas:
 {json.dumps(tasks_context, ensure_ascii=False, indent=2)}
 
-Retorne SOMENTE um array JSON válido, sem markdown, sem explicações:
-[{{"task_id": "uuid", "motivo": "razão curta em português"}}]
+Responda APENAS com JSON array, sem texto adicional, sem markdown:
+[{{"task_id": "id aqui", "motivo": "motivo curto"}}]
 
-Se nenhuma tarefa merece lembrete agora, retorne exatamente: []"""
+Exemplo de resposta válida:
+[{{"task_id": "abc-123", "motivo": "4 dias sem interação"}}]
+
+Se nenhuma se qualifica, responda: []"""
 
     try:
         log.info(f"Ollama: enviando prompt com {len(tasks_context)} tarefas...")

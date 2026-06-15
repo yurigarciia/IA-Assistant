@@ -35,7 +35,7 @@ async def parse_task(texto: str) -> tuple[TaskCreate, dict | None]:
         import google.generativeai as genai
         genai.configure(api_key=settings.gemini_api_key)
         model = genai.GenerativeModel(
-            "gemini-2.0-flash",
+            "gemini-2.5-flash",
             generation_config={"response_mime_type": "application/json"},
         )
         response = model.generate_content(PARSE_PROMPT.replace("{texto}", texto))

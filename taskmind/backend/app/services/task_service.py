@@ -37,16 +37,14 @@ async def create_task(db: AsyncSession, data: TaskCreate) -> Task:
     task = Task(**data.model_dump())
     db.add(task)
     await db.commit()
-    await db.refresh(task, ["interactions"])
-    return task
+    return await get_task(db, task.id)
 
 
 async def update_task(db: AsyncSession, task: Task, data: TaskUpdate) -> Task:
     for field, value in data.model_dump(exclude_none=True).items():
         setattr(task, field, value)
     await db.commit()
-    await db.refresh(task, ["interactions"])
-    return task
+    return await get_task(db, task.id)
 
 
 async def complete_task(db: AsyncSession, task: Task) -> Task:
@@ -55,8 +53,7 @@ async def complete_task(db: AsyncSession, task: Task) -> Task:
     interaction = Interaction(task_id=task.id, tipo="status_change", conteudo="Tarefa marcada como concluída")
     db.add(interaction)
     await db.commit()
-    await db.refresh(task, ["interactions"])
-    return task
+    return await get_task(db, task.id)
 
 
 async def add_comment(db: AsyncSession, task: Task, conteudo: str) -> Interaction:

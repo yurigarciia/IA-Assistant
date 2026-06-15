@@ -86,7 +86,7 @@ Se a resposta não se refere claramente a nenhuma tarefa, retorne []."""
 
     try:
         model = genai.GenerativeModel(
-            "gemini-2.0-flash",
+            "gemini-2.5-flash",
             generation_config={"response_mime_type": "application/json"},
         )
         response = model.generate_content(prompt)
