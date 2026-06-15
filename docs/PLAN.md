@@ -12,7 +12,7 @@
 FASE 1 — Fundação         [x] Completa e em produção
 FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
 FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
-FASE 4 — Canais e Bots    [~] Telegram bidirecional já implementado na Fase 3 (Teams + PWA pendentes)
+FASE 4 — Canais e Bots    [~] Telegram completo (Teams + PWA = melhoria futura)
 FASE 5 — Refinamento      [~] Parcial (drag & drop, busca, filtros, kanban já feitos)
 ```
 
@@ -258,8 +258,10 @@ funcionando     funcionando     ativa           integrados      final
 - [x] Envio de lembretes proativos com formato Markdown
 - [x] Receber resposta em linguagem natural → Gemini identifica tarefa e ação → atualiza banco
 - [x] Testado end-to-end em 2026-06-15
-- [ ] Comando `/tasks` — listar tarefas abertas pelo bot
-- [ ] Comando `/nova` — criar tarefa via bot (texto livre → ingest)
+- [x] Comando `/tasks` — listar tarefas abertas ordenadas por urgência
+- [x] Comando `/nova <texto>` — criar tarefa via bot (texto livre → Gemini ingest)
+- [x] Silêncio noturno: proactivity_check bloqueado entre 23h e 8h (horário Brasília)
+- [x] Pré-filtro de cooldown em Python antes do Ollama (evita spam a cada 15min)
 
 ### 4.2 — Microsoft Teams
 
