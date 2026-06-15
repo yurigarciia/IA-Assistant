@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy import select
@@ -14,6 +15,12 @@ _scheduler = AsyncIOScheduler(timezone="America/Sao_Paulo")
 
 async def proactivity_check() -> None:
     from app.services import ollama_service, telegram_service
+
+    _TZ = ZoneInfo("America/Sao_Paulo")
+    hora_local = datetime.now(_TZ).hour
+    if hora_local < 8 or hora_local >= 23:
+        log.info(f"Proactivity check: silêncio noturno ({hora_local}h) — pulando")
+        return
 
     log.info("Proactivity check: iniciando")
 
@@ -30,9 +37,19 @@ async def proactivity_check() -> None:
         return
 
     now = datetime.now(timezone.utc)
+
+    COOLDOWN_HORAS = {"critica": 2, "alta": 6, "media": 24, "baixa": 72}
+
     tasks_context = []
 
     for t in tasks:
+        # Pré-filtro: respeitar cooldown por urgência antes de enviar ao Ollama
+        if t.ultimo_lembrete_em:
+            horas_desde_lembrete = (now - t.ultimo_lembrete_em).total_seconds() / 3600
+            cooldown = COOLDOWN_HORAS.get(t.urgencia, 24)
+            if horas_desde_lembrete < cooldown:
+                continue
+
         # Última interação: interaction mais recente ou data de criação
         timestamps = [i.criada_em for i in t.interactions] + [t.criada_em]
         last_interaction = max(timestamps)

@@ -174,6 +174,69 @@ async def _process_reply(user_text: str) -> None:
         await send_message("✓ Entendido!")
 
 
+async def _cmd_tasks() -> None:
+    from app.db import SessionLocal as async_session
+    from app.models.task import Task
+    from sqlalchemy import select
+
+    async with async_session() as db:
+        result = await db.execute(
+            select(Task).where(Task.status.notin_(["concluida"])).order_by(Task.criada_em)
+        )
+        tasks = result.scalars().all()
+
+    if not tasks:
+        await send_message("Nenhuma tarefa aberta no momento. 🎉")
+        return
+
+    order = {"critica": 0, "alta": 1, "media": 2, "baixa": 3}
+    tasks = sorted(tasks, key=lambda t: order.get(t.urgencia, 9))
+
+    lines = [f"📋 *{len(tasks)} tarefa(s) aberta(s):*\n"]
+    for t in tasks:
+        emoji = URGENCIA_EMOJI.get(t.urgencia, "⚪")
+        status_emoji = STATUS_EMOJI.get(t.status, "📋")
+        line = f"{emoji} *{t.titulo}*"
+        if t.projeto:
+            line += f" _{t.projeto}_"
+        line += f"\n   {status_emoji} {t.status.replace('_', ' ')}"
+        if t.prazo_inf:
+            line += f" · prazo {t.prazo_inf.strftime('%d/%m')}"
+        lines.append(line)
+
+    await send_message("\n".join(lines))
+
+
+async def _cmd_nova(texto: str) -> None:
+    if not texto:
+        await send_message("Use: /nova <descrição da tarefa>")
+        return
+
+    await send_message("⏳ Processando...")
+    try:
+        from app.services.ai_service import parse_task
+        from app.services.task_service import create_task
+        from app.db import SessionLocal as async_session
+
+        parsed, _ = await parse_task(texto)
+        async with async_session() as db:
+            task = await create_task(db, parsed)
+
+        emoji = URGENCIA_EMOJI.get(task.urgencia, "⚪")
+        msg = f"✅ Tarefa criada:\n{emoji} *{task.titulo}*"
+        if task.projeto:
+            msg += f" — _{task.projeto}_"
+        if task.tags:
+            msg += f"\n🏷 {', '.join(task.tags)}"
+        if task.prazo_inf:
+            msg += f"\n📅 Prazo: {task.prazo_inf.strftime('%d/%m/%Y')}"
+        msg += f"\n⚡ Urgência: {task.urgencia}"
+        await send_message(msg)
+    except Exception as e:
+        log.error(f"Telegram /nova error: {e}")
+        await send_message("❌ Erro ao criar tarefa. Tente novamente.")
+
+
 async def start_polling() -> None:
     global _last_update_id
 
@@ -202,8 +265,16 @@ async def start_polling() -> None:
                     chat_id = str(msg.get("chat", {}).get("id", ""))
                     text = msg.get("text", "").strip()
 
-                    # Só processa mensagens do chat configurado, que não sejam comandos
-                    if chat_id == str(settings.telegram_chat_id) and text and not text.startswith("/"):
+                    if chat_id != str(settings.telegram_chat_id) or not text:
+                        continue
+
+                    if text.startswith("/tasks"):
+                        asyncio.create_task(_cmd_tasks())
+                    elif text.startswith("/nova "):
+                        asyncio.create_task(_cmd_nova(text[6:].strip()))
+                    elif text.startswith("/nova"):
+                        asyncio.create_task(send_message("Use: /nova <descrição da tarefa>"))
+                    elif not text.startswith("/"):
                         asyncio.create_task(_process_reply(text))
 
             except asyncio.CancelledError:
