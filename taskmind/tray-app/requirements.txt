@@ -3,3 +3,5 @@ Pillow==10.4.0
 keyboard==0.13.5
 requests==2.32.3
 pywin32==306
+python-dotenv==1.0.1
+pyinstaller==6.11.1

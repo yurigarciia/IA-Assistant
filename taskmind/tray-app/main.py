@@ -6,7 +6,7 @@ import keyboard
 from PIL import Image, ImageDraw, ImageFont
 import api_client
 import modal
-from config import API_URL, HOTKEY
+from config import API_URL, DASHBOARD_URL, HOTKEY
 
 
 def build_icon(online: bool = True) -> Image.Image:
@@ -25,7 +25,7 @@ def build_icon(online: bool = True) -> Image.Image:
 
 
 def open_dashboard():
-    webbrowser.open(f"{API_URL.replace(':8000', ':3000')}")
+    webbrowser.open(DASHBOARD_URL)
 
 
 def on_hotkey():
