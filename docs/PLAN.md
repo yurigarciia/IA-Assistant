@@ -10,6 +10,7 @@
 
 ```
 FASE 1 — Fundação         [x] Completa e em produção
+TRAY APP                  [x] .exe distribuível com modal redesenhado (2026-06-15)
 FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
 FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
 FASE 4 — Canais e Bots    [x] Telegram completo — Teams postergado, PWA em andamento
@@ -187,9 +188,10 @@ funcionando     funcionando     ativa           integrados      final
   - Fecha automaticamente após sucesso
 - [x] Atalho global `Ctrl+Shift+T` (configurável no `.env`)
 - [x] Startup do Windows via registro (`HKCU\...\Run`) — toggle no menu do ícone
-- [ ] Build em `.exe` com PyInstaller
+- [x] Build em `.exe` com PyInstaller — `.env` embutido no executável (arquivo único, sem dependências externas)
+- [x] Modal redesenhado: estilo Spotlight, cantos arredondados nativos (DWM API), barra de progresso animada, foco imediato
 
-**Marco 2 atingido quando:** atalho de teclado abre o modal, texto é enviado, IA processa e tarefa aparece estruturada na web. ✓
+**Marco 2 atingido quando:** atalho de teclado abre o modal, texto é enviado, IA processa e tarefa aparece estruturada na web. ✓ **CONCLUÍDO — .exe distribuível gerado em 2026-06-15**
 
 ---
 
