@@ -2,7 +2,7 @@
 
 > Baseado em: `design.md`  
 > Critérios de validação: `criterios-aceite.md`  
-> Status: 🔄 Em andamento — Rodada 3 concluída
+> Status: 🔄 Em andamento — Rodada 4 concluída
 
 ---
 
@@ -72,8 +72,8 @@ Rodada 5 — Validação end-to-end + ajustes
 
 **Objetivo:** Tray app verifica notificações automaticamente a cada 30s, sem intervenção manual.
 
-- [ ] Em `main.py`, dentro de `ping_loop()`, adicionar chamada a `notifier.check_and_notify()` quando `is_online=True`
-- [ ] Garantir que falha no notifier não interrompe o ping_loop (try/except)
+- [x] Em `main.py`, dentro de `ping_loop()`, adicionar chamada a `notifier.check_and_notify()` quando `is_online=True`
+- [x] Garantir que falha no notifier não interrompe o ping_loop (try/except)
 - [ ] Testar com tray app rodando: criar notificação no banco e aguardar até 30s
 
 **Critérios validados nesta rodada:** CA-NW02 (sem duplicação), CA-NW06 (resiliente a offline)

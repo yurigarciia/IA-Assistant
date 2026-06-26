@@ -6,6 +6,7 @@ import keyboard
 from PIL import Image, ImageDraw, ImageFont
 import api_client
 import modal
+import notifier
 from config import API_URL, DASHBOARD_URL, HOTKEY
 
 
@@ -118,6 +119,11 @@ def main():
             is_online = api_client.health_check()
             icon.icon = build_icon(is_online)
             icon.title = "TaskMind" + ("" if is_online else " (servidor offline)")
+            if is_online:
+                try:
+                    notifier.check_and_notify()
+                except Exception as e:
+                    log.error(f"ping_loop: erro no notifier: {e}")
 
     threading.Thread(target=ping_loop, daemon=True).start()
 
