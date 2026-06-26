@@ -24,10 +24,10 @@ def _show_toast(titulo_tarefa: str, urgencia_label: str) -> None:
             app_id="TaskMind",
             title="TaskMind — Tarefa pendente",
             msg=f"{titulo_tarefa}\nUrgência: {urgencia_label}" if urgencia_label else titulo_tarefa,
-            duration="short",
+            duration="long",
             launch=DASHBOARD_URL,
         )
-        toast.set_audio(audio.Default, loop=False)
+        toast.set_audio(audio.Reminder, loop=False)
         toast.show()
     except Exception as e:
         log.error(f"Notifier: erro ao exibir toast: {e}")

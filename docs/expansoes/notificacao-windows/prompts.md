@@ -19,3 +19,11 @@ Registro dos prompts dados ao Claude Code durante o desenvolvimento desta expans
 **Decisão gerada:** criar `docs/expansoes/<nome-da-feature>/` com `requisitos.md`, `criterios-aceite.md`, `design.md` e `prompts.md`. Specs antes do código — o PLAN.md é atualizado após a implementação.
 
 ---
+
+## P03 — Ajuste de som e prioridade após teste real
+
+> "a tarefa chegou, mas como meu windows fica no modo silencioso, ela não apareceu, ela precisa ser de 'alta prioridade', e seria legal emitir um som sutil também. Cliquei na notificação e abriu o dashboard."
+
+**Decisão gerada:** trocar `audio.Default` por `audio.Reminder` (som mais distinto, classificado como lembrete pelo Windows) e `duration="short"` por `duration="long"` (toast permanece visível por mais tempo). Nota: bypass completo do modo silencioso exigiria registro do app como notificação prioritária nas configurações do Windows — documentado como limitação conhecida.
+
+---

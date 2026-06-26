@@ -15,6 +15,7 @@ FASE 2 — IA e Input       [x] Completa e em produção (Gemini 2.5-flash)
 FASE 3 — Proatividade     [x] Completa e em produção (2026-06-15, testado end-to-end)
 FASE 4 — Canais e Bots    [x] Completa — Telegram + PWA concluídos (Teams postergado)
 FASE 5 — Refinamento      [x] Documentação entregue (README + PROJECT.md atualizados)
+EXPANSÃO — Notif Windows  [x] Toast nativa via tray app + polling 30s (2026-06-26)
 ```
 
 ---

@@ -33,6 +33,20 @@ async def get_pending(db: AsyncSession = Depends(get_db)):
     return result.scalars().all()
 
 
+@router.post("/test", response_model=NotificationOut, status_code=201)
+async def create_test_notification(db: AsyncSession = Depends(get_db)):
+    """Cria uma notificação desktop de teste para validação do tray app."""
+    notif = Notification(
+        canal="desktop",
+        mensagem="Tarefa de teste do tray app [alta]",
+        entregue_tray=False,
+    )
+    db.add(notif)
+    await db.commit()
+    await db.refresh(notif)
+    return notif
+
+
 @router.post("/{notification_id}/ack", response_model=NotificationOut)
 async def ack_notification(notification_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     notif = await db.get(Notification, notification_id)

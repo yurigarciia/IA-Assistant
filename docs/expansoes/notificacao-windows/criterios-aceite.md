@@ -14,6 +14,8 @@
 
 **Verificação:** criar manualmente um registro em `notifications` com `entregue_tray=False` e aguardar até 30s
 
+**Resultado observado:** ✅ Toast apareceu em até 30s após chamar `POST /api/notifications/test`. Ajuste aplicado: `audio.Reminder` + `duration="long"` pois `audio.Default` + `duration="short"` não aparecia no modo silencioso do Windows.
+
 ---
 
 ## CA-NW02 — Notificação não é repetida
@@ -36,6 +38,8 @@
 - O browser abre na `DASHBOARD_URL` configurada no `.env`
 
 **Verificação:** clicar na toast e confirmar abertura do browser na URL correta (porta 3010)
+
+**Resultado observado:** ✅ Dashboard abriu corretamente ao clicar na toast.
 
 ---
 

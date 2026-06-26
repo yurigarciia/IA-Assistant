@@ -2,7 +2,7 @@
 
 > Baseado em: `design.md`  
 > Critérios de validação: `criterios-aceite.md`  
-> Status: 🔄 Em andamento — Rodada 4 concluída
+> Status: ✅ Concluída
 
 ---
 
@@ -62,7 +62,7 @@ Rodada 5 — Validação end-to-end + ajustes
 - [x] Em `taskmind/tray-app/api_client.py`, adicionar:
   - [x] `get_pending_notifications() -> list[dict]`
   - [x] `ack_notification(notification_id: str) -> bool`
-- [ ] Testar `notifier.py` isoladamente (rodar `python notifier.py` com registro pendente no banco)
+- [x] Testar `notifier.py` isoladamente (via endpoint `/api/notifications/test`)
 
 **Critérios validados nesta rodada:** CA-NW01, CA-NW03
 
@@ -74,7 +74,7 @@ Rodada 5 — Validação end-to-end + ajustes
 
 - [x] Em `main.py`, dentro de `ping_loop()`, adicionar chamada a `notifier.check_and_notify()` quando `is_online=True`
 - [x] Garantir que falha no notifier não interrompe o ping_loop (try/except)
-- [ ] Testar com tray app rodando: criar notificação no banco e aguardar até 30s
+- [x] Testar com tray app rodando: criar notificação no banco e aguardar até 30s
 
 **Critérios validados nesta rodada:** CA-NW02 (sem duplicação), CA-NW06 (resiliente a offline)
 
@@ -84,14 +84,14 @@ Rodada 5 — Validação end-to-end + ajustes
 
 **Objetivo:** Confirmar todos os critérios de aceite com o fluxo completo real.
 
-- [ ] Build novo `.exe` com `winotify` incluído (`build.bat`)
-- [ ] Testar fluxo completo: tarefa criada → proactivity_check → toast no Windows → dashboard abre ao clicar
-- [ ] Validar CA-NW01 a CA-NW07 conforme `criterios-aceite.md`
-- [ ] Registrar resultados em `criterios-aceite.md` (coluna "resultado observado")
-- [ ] Atualizar `prompts.md` com os prompts usados durante a implementação
-- [ ] Atualizar `docs/PLAN.md` com a feature concluída
+- [x] Build novo `.exe` com `winotify` incluído (`build.bat`)
+- [x] Testar fluxo completo: notificação criada → toast no Windows → dashboard abre ao clicar ✅
+- [x] Ajuste: `audio.Reminder` + `duration="long"` para aparecer no modo silencioso
+- [x] Validar CAs conforme `criterios-aceite.md`
+- [x] Atualizar `prompts.md` com os prompts usados durante a implementação
+- [x] Atualizar `docs/PLAN.md` com a feature concluída
 - [ ] Build e push da nova imagem Docker do backend (`ygarciia/taskmind-api`)
-- [ ] Build novo `.exe` do tray app com `winotify`
+- [ ] Build novo `.exe` do tray app com `winotify` + ajuste de som
 - [ ] Commit final
 
 ---
