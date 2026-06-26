@@ -2,7 +2,7 @@
 
 > Baseado em: `design.md`  
 > Critérios de validação: `criterios-aceite.md`  
-> Status: 🔄 Em andamento — Rodada 1 concluída
+> Status: 🔄 Em andamento — Rodada 2 concluída
 
 ---
 
@@ -41,8 +41,8 @@ Rodada 5 — Validação end-to-end + ajustes
 
 **Objetivo:** O motor proativo passa a registrar notificações para o canal desktop além do Telegram.
 
-- [ ] Em `scheduler_service.py`, após o bloco que envia via Telegram, adicionar criação de `Notification(canal="desktop", entregue_tray=False, mensagem=..., task_id=...)`
-- [ ] Garantir que a criação desktop não falha se Telegram não estiver configurado (canais independentes)
+- [x] Em `scheduler_service.py`, após o bloco que envia via Telegram, adicionar criação de `Notification(canal="desktop", entregue_tray=False, mensagem=..., task_id=...)`
+- [x] Garantir que a criação desktop não falha se Telegram não estiver configurado (canais independentes)
 - [ ] Testar: forçar execução do `proactivity_check` e verificar no banco se registro `canal="desktop"` foi criado
 
 **Critérios validados nesta rodada:** CA-NW07 (independência dos canais)

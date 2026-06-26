@@ -105,20 +105,27 @@ async def proactivity_check() -> None:
 
     await telegram_service.send_proactivity_notification(notify_payload)
 
-    # Atualiza ultimo_lembrete_em e registra na tabela notifications
+    # Atualiza ultimo_lembrete_em e registra notificações (telegram + desktop)
     async with async_session() as db:
         for t in tasks_to_notify:
             task_db = await db.get(Task, t.id)
             if task_db:
                 task_db.ultimo_lembrete_em = now
+                mensagem = f"{t.titulo} [{t.urgencia}]"
                 db.add(Notification(
                     task_id=t.id,
                     canal="telegram",
-                    mensagem=f"Lembrete proativo: {t.titulo}",
+                    mensagem=mensagem,
+                ))
+                db.add(Notification(
+                    task_id=t.id,
+                    canal="desktop",
+                    mensagem=mensagem,
+                    entregue_tray=False,
                 ))
         await db.commit()
 
-    log.info(f"Proactivity check: {len(tasks_to_notify)} lembretes enviados")
+    log.info(f"Proactivity check: {len(tasks_to_notify)} lembretes enviados (telegram + desktop)")
 
 
 async def daily_summary() -> None:
