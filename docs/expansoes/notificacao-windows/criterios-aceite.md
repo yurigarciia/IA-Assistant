@@ -14,7 +14,9 @@
 
 **Verificação:** criar manualmente um registro em `notifications` com `entregue_tray=False` e aguardar até 30s
 
-**Resultado observado:** ✅ Toast apareceu em até 30s após chamar `POST /api/notifications/test`. Ajuste aplicado: `audio.Reminder` + `duration="long"` pois `audio.Default` + `duration="short"` não aparecia no modo silencioso do Windows.
+**Resultado observado:** ✅ Toast apareceu em até 30s após chamar `POST /api/notifications/test` (com DND desativado). Ajuste aplicado: `audio.Reminder` + `duration="long"`.
+
+**Limitação conhecida:** Com "Não Perturbe" ativo no Windows 11, o popup é suprimido e vai direto ao centro de notificações — comportamento imposto pelo OS para apps sem AUMID registrado no sistema, não contornável via código (testado com `winotify`, `win11toast` com `scenario="reminder"` e `scenario="alarm"`). **Workaround:** Configurações → Sistema → Notificações → Não Perturbe → adicionar TaskMind nas exceções.
 
 ---
 

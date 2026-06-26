@@ -24,6 +24,6 @@ Registro dos prompts dados ao Claude Code durante o desenvolvimento desta expans
 
 > "a tarefa chegou, mas como meu windows fica no modo silencioso, ela não apareceu, ela precisa ser de 'alta prioridade', e seria legal emitir um som sutil também. Cliquei na notificação e abriu o dashboard."
 
-**Decisão gerada:** trocar `audio.Default` por `audio.Reminder` (som mais distinto, classificado como lembrete pelo Windows) e `duration="short"` por `duration="long"` (toast permanece visível por mais tempo). Nota: bypass completo do modo silencioso exigiria registro do app como notificação prioritária nas configurações do Windows — documentado como limitação conhecida.
+**Decisão gerada:** trocar `audio.Default` por `audio.Reminder` e `duration="short"` por `duration="long"`. Testado também `win11toast` com `scenario="reminder"` e `scenario="alarm"` — nenhum bypassa o DND do Windows 11 para apps sem AUMID registrado. Solução definitiva: usuário adiciona TaskMind nas exceções de DND nas configurações do Windows. Documentado como limitação conhecida em `criterios-aceite.md`.
 
 ---
