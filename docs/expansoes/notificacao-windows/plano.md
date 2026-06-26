@@ -2,7 +2,7 @@
 
 > Baseado em: `design.md`  
 > Critérios de validação: `criterios-aceite.md`  
-> Status: 🔲 Não iniciado
+> Status: 🔄 Em andamento — Rodada 1 concluída
 
 ---
 
@@ -22,12 +22,12 @@ Rodada 5 — Validação end-to-end + ajustes
 
 **Objetivo:** API capaz de criar, listar e confirmar notificações desktop.
 
-- [ ] Adicionar campo `entregue_tray: Mapped[bool]` no model `Notification` em `task.py`
-- [ ] Criar migration `0003_notif_tray.py` com `ALTER TABLE notifications ADD COLUMN entregue_tray BOOLEAN DEFAULT FALSE`
-- [ ] Criar `taskmind/backend/app/routers/notifications.py` com:
-  - [ ] `GET /api/notifications/pending` → filtra `canal="desktop"` e `entregue_tray=False`
-  - [ ] `POST /api/notifications/{id}/ack` → seta `entregue_tray=True`
-- [ ] Registrar o novo router em `main.py`
+- [x] Adicionar campo `entregue_tray: Mapped[bool]` no model `Notification` em `task.py`
+- [x] Criar migration `0003_notif_entregue_tray.py` com `ALTER TABLE notifications ADD COLUMN entregue_tray BOOLEAN DEFAULT FALSE`
+- [x] Criar `taskmind/backend/app/routers/notifications.py` com:
+  - [x] `GET /api/notifications/pending` → filtra `canal="desktop"` e `entregue_tray=False`
+  - [x] `POST /api/notifications/{id}/ack` → seta `entregue_tray=True`
+- [x] Registrar o novo router em `main.py`
 - [ ] Testar manualmente via Swagger (`/docs`):
   - [ ] Inserir registro de teste direto no banco e chamar `/pending`
   - [ ] Chamar `/ack` e confirmar que `entregue_tray` muda para `True`

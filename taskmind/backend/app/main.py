@@ -8,7 +8,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import tasks
+from app.routers import tasks, notifications
 from app.services import scheduler_service, telegram_service
 
 log = logging.getLogger(__name__)
@@ -72,6 +72,7 @@ app.add_middleware(
 )
 
 app.include_router(tasks.router, prefix="/api")
+app.include_router(notifications.router, prefix="/api")
 
 
 @app.get("/api/health")

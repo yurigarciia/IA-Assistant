@@ -62,5 +62,6 @@ class Notification(Base):
     mensagem: Mapped[str | None] = mapped_column(Text)
     enviada_em: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
     respondida: Mapped[bool] = mapped_column(Boolean, default=False)
+    entregue_tray: Mapped[bool] = mapped_column(Boolean, default=False)
 
     task: Mapped["Task | None"] = relationship(back_populates="notifications")
