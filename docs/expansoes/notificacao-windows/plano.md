@@ -90,9 +90,9 @@ Rodada 5 — Validação end-to-end + ajustes
 - [x] Validar CAs conforme `criterios-aceite.md`
 - [x] Atualizar `prompts.md` com os prompts usados durante a implementação
 - [x] Atualizar `docs/PLAN.md` com a feature concluída
-- [ ] Build e push da nova imagem Docker do backend (`ygarciia/taskmind-api`)
-- [ ] Build novo `.exe` do tray app com `winotify` + ajuste de som
-- [ ] Commit final
+- [x] Build e push da nova imagem Docker do backend (`ygarciia/taskmind-api`)
+- [x] Build novo `.exe` do tray app com `winotify` + ajuste de som
+- [x] Commit final
 
 ---
 
