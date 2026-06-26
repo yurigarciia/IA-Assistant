@@ -2,7 +2,7 @@
 
 > Baseado em: `design.md`  
 > Critérios de validação: `criterios-aceite.md`  
-> Status: 🔄 Em andamento — Rodada 2 concluída
+> Status: 🔄 Em andamento — Rodada 3 concluída
 
 ---
 
@@ -53,15 +53,15 @@ Rodada 5 — Validação end-to-end + ajustes
 
 **Objetivo:** Tray app consegue buscar, exibir e confirmar notificações.
 
-- [ ] Adicionar `winotify==1.1.0` em `taskmind/tray-app/requirements.txt`
-- [ ] Criar `taskmind/tray-app/notifier.py`:
-  - [ ] Função `check_and_notify()` — busca pendentes, exibe toast, confirma via ack
-  - [ ] Toast com título `"TaskMind — Tarefa pendente"`, corpo com título + urgência da tarefa
-  - [ ] Ao clicar na toast: abre `DASHBOARD_URL` no browser
-  - [ ] Try/except em torno de tudo — falha silenciosa, sem derrubar o processo
-- [ ] Em `taskmind/tray-app/api_client.py`, adicionar:
-  - [ ] `get_pending_notifications() -> list[dict]`
-  - [ ] `ack_notification(notification_id: str) -> bool`
+- [x] Adicionar `winotify==1.1.0` em `taskmind/tray-app/requirements.txt`
+- [x] Criar `taskmind/tray-app/notifier.py`:
+  - [x] Função `check_and_notify()` — busca pendentes, exibe toast, confirma via ack
+  - [x] Toast com título `"TaskMind — Tarefa pendente"`, corpo com título + urgência da tarefa
+  - [x] Ao clicar na toast: abre `DASHBOARD_URL` no browser
+  - [x] Try/except em torno de tudo — falha silenciosa, sem derrubar o processo
+- [x] Em `taskmind/tray-app/api_client.py`, adicionar:
+  - [x] `get_pending_notifications() -> list[dict]`
+  - [x] `ack_notification(notification_id: str) -> bool`
 - [ ] Testar `notifier.py` isoladamente (rodar `python notifier.py` com registro pendente no banco)
 
 **Critérios validados nesta rodada:** CA-NW01, CA-NW03

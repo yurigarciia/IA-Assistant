@@ -25,3 +25,20 @@ def health_check() -> bool:
         return resp.status_code == 200
     except Exception:
         return False
+
+
+def get_pending_notifications() -> list[dict]:
+    try:
+        resp = requests.get(f"{API_URL}/api/notifications/pending", timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception:
+        return []
+
+
+def ack_notification(notification_id: str) -> bool:
+    try:
+        resp = requests.post(f"{API_URL}/api/notifications/{notification_id}/ack", timeout=5)
+        return resp.status_code == 200
+    except Exception:
+        return False
